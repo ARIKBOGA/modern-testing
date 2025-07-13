@@ -12,3 +12,9 @@ it('should render button component', async () => {
     const element = screen.getByText('Submit');
     await expect(element).toBeInTheDocument();
 })
+
+it('should render button component',  () => {
+    render(<App />);
+    const element = screen.getByText('Submit');
+    expect(element).toBeEnabled();
+})
