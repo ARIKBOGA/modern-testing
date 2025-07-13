@@ -1,8 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+it('should render the App with no crash', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+  const appelement = screen.getByText('Jest testing with React is fun!');
+  expect(appelement).toBeInTheDocument();
+  expect(appelement).toHaveTextContent('Jest testing with React is fun!');
+  expect(appelement).toHaveAttribute('role', 'main');
+  expect(appelement).toHaveClass('App');
+  expect(appelement.tagName).toBe('DIV');
+})
