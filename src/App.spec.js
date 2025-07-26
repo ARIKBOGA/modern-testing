@@ -10,6 +10,7 @@ function TestComponent() {
         defaultValue={"test@mail.com"}
       ></input>
       <button type="submit">Log in</button>
+      <img src='#' alt='TestComponent iamge'></img>
     </form>
   );
 }
@@ -40,4 +41,10 @@ it('should render with its displayed value', () => {
     render(<TestComponent />);
     const element = screen.getByDisplayValue("test@mail.com");
     expect(element).toBeInTheDocument();
+})
+
+it("should render with it's alt text for images", () => {
+    render(<TestComponent />);
+    const element = screen.getByAltText("TestComponent iamge");
+    expect(element.src).toBe('http://localhost/#');     // despite the src value has been given as '#', it will processed as 'http://localhost/#'
 })
