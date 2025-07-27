@@ -21,6 +21,16 @@ function TestComponent() {
   );
 }
 
+TestMultipleElementsComponent = ({ products }) => {
+  return (
+    <ul>
+      {products.map((product) => (
+        <li>{product}</li>
+      ))}
+    </ul>
+  );
+};
+
 test("Should render with labels", () => {
   render(<TestComponent />);
   const element = screen.getAllByLabelText("User name:"); // returns an Array
@@ -67,3 +77,16 @@ it("should render with it's role", () => {
   const element = screen.getByRole("navigation");
   expect(element.textContent).toBe("Home");
 });
+
+
+it("should render multiple elements correctly", () => {
+  const products = ["Product-1", "Product-2", "Product-3"];
+  render(<TestMultipleElementsComponent products={products} />);
+  const elements = screen.getAllByRole("listitem");
+
+  expect(elements.length).toBe(products.length);
+  
+  elements.forEach((element, index) => {
+    expect(element.textContent).toBe(products[index]);
+  })
+})
