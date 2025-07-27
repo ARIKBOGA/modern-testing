@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import React from "react";
 
-function TestComponent() {
+function TestComponent({ suffix }) {
   return (
     <>
       <form>
@@ -17,6 +18,10 @@ function TestComponent() {
       <div>
         <button role="navigation">Home</button>
       </div>
+      <div>
+        {suffix && <span>{suffix}</span>}
+        {!suffix && <span>Suffix not found</span>}
+      </div>
     </>
   );
 }
@@ -25,9 +30,25 @@ TestMultipleElementsComponent = ({ products }) => {
   return (
     <ul>
       {products.map((product) => (
-        <li>{product}</li>
+        <li key={product}>{product}</li>
       ))}
     </ul>
+  );
+};
+
+ReactUseStateComponent = () => {
+  const [message, setMesssage] = React.useState("Ahmet");
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setMesssage("Mehmet");
+    }, [300]);
+  }, []);
+
+  return (
+    <div>
+      <p>{message}</p>
+    </div>
   );
 };
 
@@ -78,7 +99,6 @@ it("should render with it's role", () => {
   expect(element.textContent).toBe("Home");
 });
 
-
 it("should render multiple elements correctly", () => {
   const products = ["Product-1", "Product-2", "Product-3"];
   render(<TestMultipleElementsComponent products={products} />);
@@ -88,26 +108,54 @@ it("should render multiple elements correctly", () => {
 
   elements.forEach((element, index) => {
     expect(element.textContent).toBe(products[index]);
-  })
-})
+  });
+});
 
 it("Text matching methods", () => {
   const products = ["Product-1", "Product-2", "Product-3"];
   render(<TestMultipleElementsComponent products={products} />);
 
-  // 
-  const elements = screen.getAllByText("Product", {exact: false});
+  //
+  const elements = screen.getAllByText("Product", { exact: false });
 
   expect(elements.length).toBe(products.length);
   elements.forEach((element, index) => {
     expect(element).toHaveTextContent(products[index]);
-  })
-
+  });
 
   const elementsWithRegex = screen.getAllByText(/product/i);
 
   expect(elementsWithRegex.length).toBe(products.length);
   elementsWithRegex.forEach((element, index) => {
     expect(element).toHaveTextContent(products[index]);
-  })
-})
+  });
+});
+
+it("usegae of queryBy selector", () => {
+  render(<TestComponent suffix="Test" />);
+
+  const element = screen.queryByText("Suffix not found");
+  expect(element).not.toBeInTheDocument();
+});
+
+it("should render and update state to Mehmet", async () => {
+  render(<ReactUseStateComponent />);
+
+  const element1 = screen.getByText(/ahmet/i);
+  const element2 = await screen.findByText(/mehmet/i);
+
+  expect(element1).toBeInTheDocument();
+  expect(element2).toBeInTheDocument();
+});
+
+it("should render and update state to Mehmet 2", async () => {
+  render(<ReactUseStateComponent />);
+
+  await waitFor(() => {
+    expect(screen.getByText(/mehmet/i)).toBeInTheDocument();
+  });
+
+  await waitFor(() => {
+    expect(screen.queryByText(/ahmet/i)).not.toBeInTheDocument();
+  });
+});
