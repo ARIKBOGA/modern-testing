@@ -85,8 +85,29 @@ it("should render multiple elements correctly", () => {
   const elements = screen.getAllByRole("listitem");
 
   expect(elements.length).toBe(products.length);
-  
+
   elements.forEach((element, index) => {
     expect(element.textContent).toBe(products[index]);
+  })
+})
+
+it("Text matching methods", () => {
+  const products = ["Product-1", "Product-2", "Product-3"];
+  render(<TestMultipleElementsComponent products={products} />);
+
+  // 
+  const elements = screen.getAllByText("Product", {exact: false});
+
+  expect(elements.length).toBe(products.length);
+  elements.forEach((element, index) => {
+    expect(element).toHaveTextContent(products[index]);
+  })
+
+
+  const elementsWithRegex = screen.getAllByText(/product/i);
+
+  expect(elementsWithRegex.length).toBe(products.length);
+  elementsWithRegex.forEach((element, index) => {
+    expect(element).toHaveTextContent(products[index]);
   })
 })
